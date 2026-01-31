@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // YEH IMPORTANT LINE ADD KARNA HAI
   basePath: '/agency',
+  assetPrefix: '/agency/',
   
   images: {
     remotePatterns: [
@@ -17,7 +17,7 @@ const nextConfig = {
         port: '1337',
         pathname: '/uploads/**',
       },
-      // Production Strapi URL (Railway par)
+      // Production Strapi URL (Railway)
       {
         protocol: 'https',
         hostname: 'agency-backend-production.up.railway.app',
@@ -29,25 +29,16 @@ const nextConfig = {
         pathname: '/uploads/**',
       },
     ],
-    // Production domains
-    domains: ['localhost', '127.0.0.1', 'agency-backend-production.up.railway.app', 'api.landing.azeemcodes.com'],
-    
-    // Static export ke liye required
-    unoptimized: true,
+    domains: ['localhost', '127.0.0.1', 'agency-backend-production.up.railway.app'],
+    unoptimized: true, // Required for static export
   },
   
-  // Enable Turbopack in development
-  experimental: {
-    turbo: {
-      // Turbopack configuration if needed
-    },
-  },
-  
-  // Static export (Hostinger ke liye)
-  output: 'export',
-  
-  // Optional: Trailing slash for better compatibility
+  // Optional: For better compatibility
   trailingSlash: true,
+  
+  experimental: {
+    turbo: {},
+  },
 };
 
 module.exports = nextConfig;
