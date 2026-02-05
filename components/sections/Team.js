@@ -97,7 +97,15 @@ const TeamMemberModal = ({ member, isOpen, onClose }) => {
   };
 
   const socialLinks = parseSocialLinks();
-
+const getImageUrl = (image) => {
+  if (!image?.url) return '/default-avatar.jpg';
+  // Agar URL pehle se complete hai (like Cloudinary)
+  if (image.url.startsWith('http')) return image.url;
+  
+  // Production URL (Railway) ya fallback
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
+  return `${STRAPI_URL}${image.url}`;
+};
   return (
     <AnimatePresence>
       <motion.div
@@ -129,13 +137,13 @@ const TeamMemberModal = ({ member, isOpen, onClose }) => {
             <div className="lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full">
                 <Image
-                  src={member.photo?.url ? `http://127.0.0.1:1337${member.photo.url}` : '/default-avatar.jpg'}
-                  alt={member.name}
-                  fill
-                  className="object-cover rounded-t-3xl lg:rounded-l-3xl lg:rounded-tr-none"
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                  unoptimized={true}
-                />
+  src={getImageUrl(member.photo)}
+  alt={member.name}
+  fill
+  className="object-cover rounded-t-3xl lg:rounded-l-3xl lg:rounded-tr-none"
+  sizes="(max-width: 768px) 100vw, 40vw"
+  unoptimized={true}
+/>
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-t-3xl lg:rounded-l-3xl lg:rounded-tr-none" />
               </div>
@@ -496,13 +504,13 @@ const scrollToCTA = () => {
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">
                     <Image
-                      src={member.photo?.url ? `http://127.0.0.1:1337${member.photo.url}` : '/default-avatar.jpg'}
-                      alt={member.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      unoptimized={true}
-                    />
+  src={getImageUrl(member.photo)}
+  alt={member.name}
+  fill
+  className="object-cover group-hover:scale-110 transition-transform duration-700"
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+  unoptimized={true}
+/>
                     
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
@@ -649,7 +657,7 @@ const scrollToCTA = () => {
                   >
                     <div className="relative h-64">
                       <Image
-                        src={member.photo?.url ? `http://127.0.0.1:1337${member.photo.url}` : '/default-avatar.jpg'}
+                        src={getImageUrl(member.photo)}
                         alt={member.name}
                         fill
                         className="object-cover"
