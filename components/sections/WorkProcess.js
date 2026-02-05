@@ -153,10 +153,21 @@ const TimelineCard = memo(({
   const [debugInfo, setDebugInfo] = useState("");
   
   // Get image URL with detailed debugging
- const imageUrl = useMemo(() => {
-  if (!step.image?.url) return null;
+const imageUrl = useMemo(() => {
+  // Debugging: Console mein check karein image ka structure kya hai
+  console.log("Step Image Object:", step.image);
+
+  if (!step.image) return null;
+
+  // Agar Strapi structure nested hai (step.image.data.attributes.url)
+  const imgData = step.image.url || step.image.data?.attributes?.url;
+  
+  if (!imgData) return null;
+
+  if (imgData.startsWith('http')) return imgData;
+
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
-  return `${baseUrl}${step.image.url}`;
+  return `${baseUrl}${imgData}`;
 }, [step]);
 
   
