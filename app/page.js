@@ -24,7 +24,7 @@ async function getAgencyData() {
   });
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
 const res = await fetch(`${baseUrl}/api/agency-page?${query.toString()}`, { 
   cache: 'no-store' 
 });
