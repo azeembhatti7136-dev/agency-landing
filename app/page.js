@@ -32,6 +32,7 @@ const res = await fetch(`${baseUrl}/api/agency-page?${query.toString()}`, {
     if (!res.ok) throw new Error("Failed to fetch data");
     
     const json = await res.json();
+    console.log("Vercel received this data:", JSON.stringify(json.data?.sections)); // Ye log check karein
     // Strapi 5 format handle karne ke liye
    return json.data?.sections || [];
   } catch (error) {
