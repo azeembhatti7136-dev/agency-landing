@@ -98,13 +98,13 @@ const VARIANTS = {
   }
 };
 
-// Updated getImageUrl function
+// Updated getImageUrl function with better debugging
 export const getImageUrl = (image) => {
   if (!image?.url) return null;
+
   const STRAPI_URL = "http://localhost:1337";
   return `${STRAPI_URL}${image.url}`;
 };
-
 const scrollToCTA = () => {
   const ctaSection = document.getElementById('cta-banner-call-to-action');
   if (ctaSection) {
@@ -113,6 +113,7 @@ const scrollToCTA = () => {
       block: 'center'
     });
   } else {
+    // Fallback: CTA section nahi mila to bottom scroll karo
     window.scrollTo({
       top: document.body.scrollHeight,
       behavior: 'smooth'
@@ -124,6 +125,7 @@ const scrollToCTA = () => {
 const getStepIcon = (step, index) => {
   if (step.icon) return getIconComponent(step.icon);
   
+  // Default icons based on step number
   const defaultIcons = [
     Search,     // Step 1: Discovery
     Lightbulb,  // Step 2: Planning
@@ -138,7 +140,7 @@ const getStepIcon = (step, index) => {
   return defaultIcons[index] || Search;
 };
 
-// Timeline Card Component - UPDATED
+// Timeline Card Component
 const TimelineCard = memo(({ 
   step, 
   index, 
@@ -150,21 +152,24 @@ const TimelineCard = memo(({
   const [imgError, setImgError] = useState(false);
   const [debugInfo, setDebugInfo] = useState("");
   
-  // Get image URL
+  // Get image URL with detailed debugging
   const imageUrl = useMemo(() => {
-    if (!step.image?.url) {
-      setDebugInfo("No valid image.url found");
-      return null;
-    }
-    const fullUrl = `http://localhost:1337${step.image.url}`;
-    setDebugInfo(`Image URL OK`);
-    return fullUrl;
-  }, [step]);
+  if (!step.image?.url) {
+    setDebugInfo("No valid image.url found");
+    return null;
+  }
+
+  const fullUrl = `http://localhost:1337${step.image.url}`;
+  setDebugInfo(`Image URL OK`);
+
+  return fullUrl;
+}, [step]);
+
   
   // Get icon component
   const Icon = useMemo(() => getStepIcon(step, index), [step, index]);
   
-  // Parse tags
+  // Parse tags from JSON string or array
   const tags = useMemo(() => {
     if (!step.tags) return [];
     if (typeof step.tags === 'string') {
@@ -177,7 +182,7 @@ const TimelineCard = memo(({
     return step.tags;
   }, [step.tags]);
 
-  // Parse milestones
+  // Parse milestones from JSON string or array
   const milestones = useMemo(() => {
     if (!step.milestones) return [];
     if (typeof step.milestones === 'string') {
@@ -203,66 +208,50 @@ const TimelineCard = memo(({
         style={{ backgroundColor: color }}
       />
       
-      {/* Timeline Node with Step Number - Now positioned outside card */}
-      <div className="absolute -top-6 md:top-4 left-1/2 md:left-1/2 -translate-x-1/2 
-        md:translate-x-0 z-30"
+      {/* Timeline Node */}
+      <div className="absolute top-6 md:top-10 left-1/2 md:left-1/2 -translate-x-1/2 
+        md:translate-x-0 z-10"
       >
-        {/* Step number badge - Top of the card */}
         <motion.div
           animate={{ 
-            scale: isActive ? 1.1 : 1,
+            scale: isActive ? 1.2 : 1,
             boxShadow: isActive ? `0 0 20px ${color}40` : 'none'
           }}
           transition={{ type: "spring", stiffness: 300 }}
-          className="relative"
+          className={`relative w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center
+            border-4 border-white shadow-lg`}
+          style={{ backgroundColor: color }}
         >
-          {/* Main step number badge */}
-          <div className="px-4 py-2 bg-white rounded-full shadow-lg border border-gray-200 
-            text-sm font-bold text-gray-800 flex items-center gap-2 mb-2"
-          >
-            <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
-              style={{ backgroundColor: color, color: 'white' }}>
-              {index + 1}
-            </div>
-            <span>Step {step.step_number || index + 1}</span>
-          </div>
+          <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />
           
-          {/* Icon floating above image */}
-          <motion.div
-            animate={{ 
-              scale: isActive ? 1.15 : 1,
-              y: isActive ? -5 : 0
-            }}
-            className="absolute -bottom-12 left-1/2 -translate-x-1/2 z-40"
-          >
-            <div className="relative w-14 h-14 rounded-full flex items-center justify-center
-              border-4 border-white shadow-xl"
-              style={{ backgroundColor: color }}
-            >
-              <Icon className="w-6 h-6 text-white" />
-              
-              {/* Pulse effect for active step */}
-              {isActive && (
-                <>
-                  <motion.div
-                    initial={{ scale: 1, opacity: 0.7 }}
-                    animate={{ scale: 1.5, opacity: 0 }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="absolute inset-0 rounded-full border-2"
-                    style={{ borderColor: color }}
-                  />
-                  <motion.div
-                    initial={{ scale: 1, opacity: 0.4 }}
-                    animate={{ scale: 1.8, opacity: 0 }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                    className="absolute inset-0 rounded-full border-2"
-                    style={{ borderColor: color }}
-                  />
-                </>
-              )}
-            </div>
-          </motion.div>
+          {/* Pulse effect for active step */}
+          {isActive && (
+            <>
+              <motion.div
+                initial={{ scale: 1, opacity: 0.7 }}
+                animate={{ scale: 1.5, opacity: 0 }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="absolute inset-0 rounded-full border-2"
+                style={{ borderColor: color }}
+              />
+              <motion.div
+                initial={{ scale: 1, opacity: 0.4 }}
+                animate={{ scale: 1.8, opacity: 0 }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                className="absolute inset-0 rounded-full border-2"
+                style={{ borderColor: color }}
+              />
+            </>
+          )}
         </motion.div>
+        
+        {/* Step number */}
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+          <div className="px-2 py-1 bg-white rounded-full shadow-sm text-xs font-bold 
+            text-gray-700 border border-gray-200">
+            Step {step.step_number || index + 1}
+          </div>
+        </div>
       </div>
       
       {/* Card Content */}
@@ -271,7 +260,7 @@ const TimelineCard = memo(({
           y: isActive ? -5 : 0,
           borderColor: isActive ? color : '#E5E7EB'
         }}
-        className="relative bg-white rounded-2xl shadow-lg border-2 p-6 mt-16 md:mt-20 
+        className="relative bg-white rounded-2xl shadow-lg border-2 p-6 mt-12 md:mt-0 
           hover:shadow-xl transition-all duration-300"
       >
         {/* Timeline pointer */}
@@ -280,84 +269,67 @@ const TimelineCard = memo(({
           style={{ backgroundColor: color }}
         />
         
-        {/* Image Section - Now with overlay for icon */}
-        <div className="mb-6 relative">
-          <div className="relative h-48 w-full rounded-xl overflow-hidden border 
+        {/* Image/Icon Section */}
+        <div className="mb-4">
+          <div className="relative h-48 w-full rounded-lg overflow-hidden border 
             bg-gradient-to-br from-gray-50 to-gray-100">
             
             {imageUrl && !imgError ? (
-              // Actual image with gradient overlay
+              // Actual image
               <>
                 <img
                   src={imageUrl}
                   alt={step.title || `Step ${index + 1}`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
+                    
                     setImgError(true);
                     setDebugInfo(`Failed to load: ${imageUrl}`);
                   }}
                   onLoad={() => {
+                   
                     setImgError(false);
                   }}
                 />
-                
-                {/* Gradient overlay at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t 
-                  from-black/70 via-black/40 to-transparent h-16">
-                  {/* Icon in top-right corner of image */}
-                  <div className="absolute -top-6 right-4">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center
-                      border-3 border-white shadow-lg"
-                      style={{ backgroundColor: color }}
-                    >
-                      <Icon className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Title inside image overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <div className="text-white">
-                    <div className="text-sm font-medium opacity-90">{step.label || `Phase ${index + 1}`}</div>
-                    <div className="text-lg font-bold">{step.title}</div>
-                  </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white p-3">
+                  <div className="text-sm font-medium">{step.title}</div>
+                  <div className="text-xs opacity-90">Step {step.step_number || index + 1}</div>
                 </div>
               </>
             ) : (
               // Icon placeholder with debug info
               <div className="w-full h-full flex flex-col items-center justify-center p-6">
-                <div className="relative">
-                  <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
-                       style={{ 
-                         backgroundColor: `${color}15`,
-                         border: `2px solid ${color}30`
-                       }}>
-                    <Icon className="w-10 h-10" style={{ color: color }} />
-                  </div>
-                  
-                  {/* Step number badge on icon placeholder */}
-                  <div className="absolute -top-2 -right-2 px-3 py-1 bg-white rounded-full 
-                    border border-gray-200 text-sm font-medium text-gray-700 shadow-sm">
-                    {step.step_number || index + 1}
-                  </div>
+                <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
+                     style={{ 
+                       backgroundColor: `${color}15`,
+                       border: `2px solid ${color}30`
+                     }}>
+                  <Icon className="w-10 h-10" style={{ color: color }} />
                 </div>
                 
                 <h4 className="text-xl font-bold text-gray-800 text-center mb-2">
                   {step.title}
                 </h4>
                 
-                {step.week && (
+                <div className="flex items-center gap-2 mt-2">
                   <div className="px-3 py-1 bg-white rounded-full border border-gray-200 
                     text-sm font-medium text-gray-700 shadow-sm">
-                    {step.week}
+                    Step {step.step_number || index + 1}
                   </div>
-                )}
+                  {step.week && (
+                    <div className="px-3 py-1 bg-white rounded-full border border-gray-200 
+                      text-sm font-medium text-gray-700 shadow-sm">
+                      {step.week}
+                    </div>
+                  )}
+                </div>
                 
                 {/* Debug info - only in development */}
                 {process.env.NODE_ENV === 'development' && debugInfo && (
                   <div className="mt-4 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800 max-w-full">
                     <div className="font-medium mb-1">Debug Info:</div>
                     <div className="truncate">{debugInfo}</div>
+                    {imageUrl && <div className="truncate mt-1">URL: {imageUrl}</div>}
                   </div>
                 )}
               </div>
@@ -365,84 +337,93 @@ const TimelineCard = memo(({
           </div>
         </div>
         
-        {/* Card content below image */}
-        <div>
-          {/* Timeline info row */}
-          <div className="flex items-center justify-between mb-4">
+        {/* Card header */}
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {step.title}
+            </h3>
             <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Clock className="w-4 h-4" />
+              <span>{step.label || `Phase ${index + 1}`}</span>
+              <span className="mx-1">•</span>
               <Calendar className="w-4 h-4" />
               <span>{step.week || `Week ${index + 1}`}</span>
-              <span className="mx-1">•</span>
-              <Clock className="w-4 h-4" />
-              <span>{step.duration || `${index + 1}-${index + 2} weeks`}</span>
-            </div>
-            
-            {/* Progress indicator */}
-            <div className="flex flex-col items-end">
-              <div className="text-xl font-bold" style={{ color: color }}>
-                {Math.round((index + 1) / 8 * 100)}%
-              </div>
-              <div className="text-xs text-gray-500">Complete</div>
+              {step.duration && (
+                <>
+                  <span className="mx-1">•</span>
+                  <span>{step.duration}</span>
+                </>
+              )}
             </div>
           </div>
           
-          {/* Description */}
-          <p className="text-gray-600 mb-4">
-            {step.description}
-          </p>
-          
-          {/* Milestones if available */}
-          {milestones.length > 0 && (
-            <div className="mb-4">
-              <div className="text-sm text-gray-700 font-medium mb-2">Key Milestones:</div>
-              <div className="flex flex-wrap gap-2">
-                {milestones.slice(0, 3).map((milestone, i) => (
-                  <span 
-                    key={`milestone-${index}-${i}`}
-                    className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium"
-                  >
-                    {milestone}
-                  </span>
-                ))}
-              </div>
+          {/* Progress indicator */}
+          <div className="flex flex-col items-end">
+            <div className="text-2xl font-bold" style={{ color: color }}>
+              {Math.round((index + 1) / 8 * 100)}%
             </div>
-          )}
-          
-          {/* Progress bar */}
-          <div className="space-y-2 mb-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-700 font-medium">Progress:</span>
-              <span className="px-2 py-1 rounded-full text-xs font-medium text-white"
-                style={{ backgroundColor: color }}>
-                Step {index + 1}/8
-              </span>
-            </div>
-            
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${(index + 1) / 8 * 100}%` }}
-                transition={{ delay: 0.5, duration: 1 }}
-                className="h-full rounded-full"
-                style={{ backgroundColor: color }}
-              />
-            </div>
+            <div className="text-xs text-gray-500">Complete</div>
           </div>
-          
-          {/* Tags */}
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200">
-              {tags.map((tag, i) => (
+        </div>
+        
+        {/* Description */}
+        <p className="text-gray-600 mb-6">
+          {step.description}
+        </p>
+        
+        {/* Milestones if available */}
+        {milestones.length > 0 && (
+          <div className="mb-4">
+            <div className="text-sm text-gray-700 font-medium mb-2">Key Milestones:</div>
+            <div className="flex flex-wrap gap-2">
+              {milestones.slice(0, 3).map((milestone, i) => (
                 <span 
-                  key={`${step.id || index}-${i}`}
+                  key={`milestone-${index}-${i}`}
                   className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium"
                 >
-                  {tag}
+                  {milestone}
                 </span>
               ))}
             </div>
-          )}
+          </div>
+        )}
+        
+        {/* Progress section */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-700 font-medium">Progress:</span>
+            <span className="px-2 py-1 rounded-full text-xs font-medium text-white"
+              style={{ backgroundColor: color }}>
+              {index + 1}/8
+            </span>
+          </div>
+          
+          {/* Progress bar */}
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${(index + 1) / 8 * 100}%` }}
+              transition={{ delay: 0.5, duration: 1 }}
+              className="h-full rounded-full"
+              style={{ backgroundColor: color }}
+            />
+          </div>
         </div>
+        
+        {/* Tags */}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            {tags.map((tag, i) => (
+              <span 
+                key={`${step.id || index}-${i}`}
+                className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );
@@ -450,7 +431,7 @@ const TimelineCard = memo(({
 
 TimelineCard.displayName = 'TimelineCard';
 
-// Debug component (unchanged)
+// Debug component to show API response
 const DebugPanel = ({ data, steps }) => {
   const [showDebug, setShowDebug] = useState(false);
   
@@ -471,6 +452,22 @@ const DebugPanel = ({ data, steps }) => {
           <div className="text-sm">
             <p><strong>Total Steps:</strong> {steps?.length || 0}</p>
             <p><strong>Steps with images:</strong> {steps?.filter(s => s.image).length || 0}</p>
+            
+            {steps?.map((step, idx) => (
+              <div key={idx} className="mt-2 p-2 border rounded">
+                <p><strong>Step {idx}:</strong> {step.title}</p>
+                <p><strong>Has image field:</strong> {!!step.image ? 'Yes' : 'No'}</p>
+                {step.image && (
+                  <>
+                    <p><strong>Image type:</strong> {typeof step.image}</p>
+                    <p><strong>Image keys:</strong> {Object.keys(step.image).join(', ')}</p>
+                    <pre className="text-xs bg-gray-100 p-1 mt-1 overflow-auto">
+                      {JSON.stringify(step.image, null, 2)}
+                    </pre>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -481,6 +478,20 @@ const DebugPanel = ({ data, steps }) => {
 // Main Timeline Component
 export default function WorkProcess({ data }) {
   
+  
+  // Detailed step analysis
+  useEffect(() => {
+    if (data?.steps && data.steps.length > 0) {
+      
+      data.steps.forEach((step, idx) => {
+        
+        if (step.image) {
+      
+        }
+      });
+    }
+  }, [data]);
+
   // Extract data based on Strapi structure
   const header = data?.header || {};
   const config = data?.configuration || {};
@@ -527,6 +538,7 @@ export default function WorkProcess({ data }) {
     if (isInView && steps.length > 0) {
       controls.start("visible");
       
+      // Animate progress
       const timer = setTimeout(() => {
         setProgress(100);
       }, 500);
@@ -596,13 +608,18 @@ export default function WorkProcess({ data }) {
         from-gray-50 to-white"
       aria-label="Our Work Process Timeline"
     >
+     
+      
+      
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Gradient orbs */}
         <div className="absolute top-1/4 -left-32 w-64 h-64 bg-blue-400/5 rounded-full 
           blur-3xl" />
         <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-purple-400/5 
           rounded-full blur-3xl" />
         
+        {/* Grid pattern */}
         <div 
           className="absolute inset-0 opacity-[0.02]"
           style={{
@@ -749,7 +766,7 @@ export default function WorkProcess({ data }) {
             variants={VARIANTS.container}
             initial="hidden"
             animate={controls}
-            className="space-y-32 md:space-y-40"
+            className="space-y-24 md:space-y-32"
           >
             {steps.map((step, index) => {
               const isRight = index % 2 === 1;
@@ -760,13 +777,16 @@ export default function WorkProcess({ data }) {
                   key={step.id || step.step_number || index}
                   className={`timeline-step relative ${isRight ? 'md:flex justify-end' : ''}`}
                 >
-                  {/* Date/Time indicator - outside card */}
-                  <div className={`absolute -top-2 ${isRight ? 'md:left-1/2 md:translate-x-8' : 'md:right-1/2 md:-translate-x-8'} 
+                  {/* Date/Time indicator */}
+                  <div className={`absolute top-0 ${isRight ? 'md:left-1/2 md:translate-x-6' : 'md:right-1/2 md:-translate-x-6'} 
                     md:w-32 text-center z-20`}
                   >
                     <div className="bg-white px-3 py-1 rounded-full shadow-sm border 
                       border-gray-200 text-sm font-medium text-gray-700 inline-block">
                       {step.week || `Week ${index + 1}`}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1 hidden md:block">
+                      Phase {index + 1}
                     </div>
                   </div>
                   
@@ -847,11 +867,12 @@ export default function WorkProcess({ data }) {
                 text-white font-semibold text-lg md:text-xl rounded-xl shadow-lg 
                 hover:shadow-xl transition-all duration-300
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              onClick={() => {
-                setTimeout(() => {
-                  scrollToCTA();
-                }, 300);
-              }}
+               onClick={() => {
+    
+    setTimeout(() => {
+      scrollToCTA();
+    }, 300); // Modal close hone ke baad
+  }}
             >
               <span className="flex items-center justify-center gap-3">
                 {cta_button_text}
