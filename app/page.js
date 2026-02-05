@@ -23,9 +23,10 @@ async function getAgencyData() {
   });
 
   try {
-    const res = await fetch(`http://localhost:1337/api/agency-page?${query.toString()}`, { 
-      cache: 'no-store' 
-    });
+    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+const res = await fetch(`${baseUrl}/api/agency-page?${query.toString()}`, { 
+  cache: 'no-store' 
+});
 
     if (!res.ok) throw new Error("Failed to fetch data");
     
