@@ -683,15 +683,15 @@ export default function WorkProcess({ data }) {
           </div>
           
           {/* Timeline Items */}
-          <motion.div
-            variants={VARIANTS.container}
-            initial="hidden"
-            animate={controls}
-            className="space-y-24 md:space-y-32"
-          >
+         <motion.div
+  variants={VARIANTS.container}
+  initial="hidden"
+  animate={controls}
+  className="space-y-32 md:space-y-40"
+>
             {steps.map((step, index) => {
-              const isRight = index % 2 === 1;
-              const color = timeline_colors[index % timeline_colors.length] || DEFAULT_TIMELINE_COLORS[index % DEFAULT_TIMELINE_COLORS.length];
+    const isRight = index % 2 === 1;
+    const color = timeline_colors[index % timeline_colors.length] || DEFAULT_TIMELINE_COLORS[index % DEFAULT_TIMELINE_COLORS.length];
               
               return (
                 <div 
@@ -712,13 +712,13 @@ export default function WorkProcess({ data }) {
                   </div>
                   
                   <TimelineCard
-                    step={step}
-                    index={index}
-                    isRight={isRight}
-                    color={color}
-                    isActive={activeStep === index}
-                    onHover={handleStepHover}
-                  />
+          step={step}
+          index={index}
+          isRight={isRight}
+          color={color}
+          isActive={activeStep === index}
+          onHover={handleStepHover}
+        />
                 </div>
               );
             })}
