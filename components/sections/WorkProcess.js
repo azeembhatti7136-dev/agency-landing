@@ -246,12 +246,7 @@ const TimelineCard = memo(({
         </motion.div>
         
         {/* Step number */}
-        <div className="absolute -top-106 left-1/2 -translate-x-1/2">
-          <div className="px-2 py-1 bg-white rounded-full shadow-sm text-xs font-bold 
-            text-gray-700 border border-gray-200">
-            Step {step.step_number || index + 1}
-          </div>
-        </div>
+       
       </div>
       
       {/* Card Content */}
