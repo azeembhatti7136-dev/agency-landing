@@ -33,7 +33,7 @@ const res = await fetch(`${baseUrl}/api/agency-page?${query.toString()}`, {
     
     const json = await res.json();
     // Strapi 5 format handle karne ke liye
-    return json.data?.sections || [];
+   return json.data?.sections || [];
   } catch (error) {
     console.error("Strapi Fetch Error:", error);
     return [];
