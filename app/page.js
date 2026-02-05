@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'; // <--- Ye line lazmi add karein
 import SectionRenderer from "@/components/SectionRenderer";
 
 async function getAgencyData() {
