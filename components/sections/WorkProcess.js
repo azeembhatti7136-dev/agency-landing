@@ -190,65 +190,65 @@ const imageUrl = useMemo(() => {
     return step.milestones;
   }, [step.milestones]);
 
-  return (
+   return (
     <motion.div
       variants={isRight ? VARIANTS.timelineItemRight : VARIANTS.timelineItem}
       onMouseEnter={() => onHover(index)}
       onMouseLeave={() => onHover(null)}
-      className={`relative w-full md:w-[44%] ${isRight ? 'md:ml-auto' : 'md:mr-auto'} mb-24`}
+      className={`relative ${isRight ? 'md:ml-auto' : 'md:mr-auto'} w-full md:w-5/12`}
     >
-      {/* Timeline Line Connection */}
-     <div className={`absolute top-12 hidden md:flex z-30 
-        ${isRight ? '-left-[13.8%] -translate-x-1/2' : '-right-[13.8%] translate-x-1/2'}`}
-      >
-      
-      {/* Timeline Node */}
-      <div className="absolute top-6 md:top-10 left-1/2 md:left-1/2 -translate-x-1/2 
-        md:translate-x-0 z-10"
-      >
-        <motion.div
-          animate={{ 
-            scale: isActive ? 1.2 : 1,
-            backgroundColor: isActive ? color : "#ffffff",
-            boxShadow: isActive ? `0 0 20px ${color}60` : "0 4px 10px rgba(0,0,0,0.1)"
-          }}
-          className="w-14 h-14 rounded-full flex items-center justify-center border-4"
-          style={{ borderColor: color }}
-        >
-          <Icon className={`w-6 h-6 ${isActive ? 'text-white' : ''}`} style={{ color: isActive ? '#fff' : color }} />
+      {/* Timeline Node (OUTSIDE THE CARD) */}
+      <div className={`absolute top-0 md:top-1/2 -translate-y-1/2 z-20 ${isRight ? 'md:left-0 md:-translate-x-12' : 'md:right-0 md:translate-x-12'} left-1/2 -translate-x-1/2 md:translate-x-0`}>
+        <div className="relative flex flex-col items-center">
+          {/* Step number - ABOVE ICON */}
+          <div className="mb-2">
+            <div className="px-3 py-1 bg-white rounded-full shadow-lg text-sm font-bold 
+              text-gray-700 border border-gray-200 whitespace-nowrap">
+              Step {step.step_number || index + 1}
+            </div>
+          </div>
           
-          {/* Pulse effect for active step */}
-          {isActive && (
-            <>
-              <motion.div
-                initial={{ scale: 1, opacity: 0.7 }}
-                animate={{ scale: 1.5, opacity: 0 }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="absolute inset-0 rounded-full border-2"
-                style={{ borderColor: color }}
-              />
-              <motion.div
-                initial={{ scale: 1, opacity: 0.4 }}
-                animate={{ scale: 1.8, opacity: 0 }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                className="absolute inset-0 rounded-full border-2"
-                style={{ borderColor: color }}
-              />
-            </>
-          )}
-        </motion.div>
-        
-        {/* Step number */}
-        <div className={`absolute -top-4 z-20 ${isRight ? 'left-8' : 'right-8'}`}>
-        <motion.span 
-          animate={{ y: isActive ? -5 : 0 }}
-          className="px-5 py-1.5 rounded-full text-xs font-black text-white shadow-xl tracking-widest uppercase"
-          style={{ backgroundColor: color }}
-        >
-          Step {step.step_number || index + 1}
-        </motion.span>
+          {/* Icon circle */}
+          <motion.div
+            animate={{ 
+              scale: isActive ? 1.2 : 1,
+              boxShadow: isActive ? `0 0 20px ${color}40` : '0 4px 12px rgba(0,0,0,0.1)'
+            }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center
+              border-4 border-white shadow-lg"
+            style={{ backgroundColor: color }}
+          >
+            <Icon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+            
+            {/* Pulse effect for active step */}
+            {isActive && (
+              <>
+                <motion.div
+                  initial={{ scale: 1, opacity: 0.7 }}
+                  animate={{ scale: 1.5, opacity: 0 }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="absolute inset-0 rounded-full border-2"
+                  style={{ borderColor: color }}
+                />
+                <motion.div
+                  initial={{ scale: 1, opacity: 0.4 }}
+                  animate={{ scale: 1.8, opacity: 0 }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                  className="absolute inset-0 rounded-full border-2"
+                  style={{ borderColor: color }}
+                />
+              </>
+            )}
+          </motion.div>
+        </div>
       </div>
-      </div>
+
+      {/* Timeline Line Connection */}
+      <div className={`absolute top-1/2 -translate-y-1/2 w-8 h-0.5 md:w-6 
+        ${isRight ? 'left-0 md:-left-6' : 'right-0 md:-right-6'} hidden md:block`}
+        style={{ backgroundColor: color }}
+      />
       
       {/* Card Content */}
       <motion.div
@@ -256,84 +256,9 @@ const imageUrl = useMemo(() => {
           y: isActive ? -5 : 0,
           borderColor: isActive ? color : '#E5E7EB'
         }}
-        className="relative bg-white rounded-2xl shadow-lg border-2 p-6 mt-12 md:mt-0 
-          hover:shadow-xl transition-all duration-300"
+        className="relative bg-white rounded-2xl shadow-lg border-2 p-6 mt-24 md:mt-0 ml-0 md:ml-12"
       >
-        {/* Timeline pointer */}
-        <div className={`absolute top-0 w-3 h-3 transform rotate-45 -translate-y-1.5
-          ${isRight ? 'right-6' : 'left-6'}`}
-          style={{ backgroundColor: color }}
-        />
-        
-        {/* Image/Icon Section */}
-        <div className="mb-4">
-          <div className="relative h-48 w-full rounded-lg overflow-hidden border 
-            bg-gradient-to-br from-gray-50 to-gray-100">
-            
-            {imageUrl && !imgError ? (
-              // Actual image
-              <>
-                <img
-                  src={imageUrl}
-                  alt={step.title || `Step ${index + 1}`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    
-                    setImgError(true);
-                    setDebugInfo(`Failed to load: ${imageUrl}`);
-                  }}
-                  onLoad={() => {
-                   
-                    setImgError(false);
-                  }}
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white p-3">
-                  <div className="text-sm font-medium">{step.title}</div>
-                  <div className="text-xs opacity-90">Step {step.step_number || index + 1}</div>
-                </div>
-              </>
-            ) : (
-              // Icon placeholder with debug info
-              <div className="w-full h-full flex flex-col items-center justify-center p-6">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
-                     style={{ 
-                       backgroundColor: `${color}15`,
-                       border: `2px solid ${color}30`
-                     }}>
-                  <Icon className="w-10 h-10" style={{ color: color }} />
-                </div>
-                
-                <h4 className="text-xl font-bold text-gray-800 text-center mb-2">
-                  {step.title}
-                </h4>
-                
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="px-3 py-1 bg-white rounded-full border border-gray-200 
-                    text-sm font-medium text-gray-700 shadow-sm">
-                    Step {step.step_number || index + 1}
-                  </div>
-                  {step.week && (
-                    <div className="px-3 py-1 bg-white rounded-full border border-gray-200 
-                      text-sm font-medium text-gray-700 shadow-sm">
-                      {step.week}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Debug info - only in development */}
-                {process.env.NODE_ENV === 'development' && debugInfo && (
-                  <div className="mt-4 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800 max-w-full">
-                    <div className="font-medium mb-1">Debug Info:</div>
-                    <div className="truncate">{debugInfo}</div>
-                    {imageUrl && <div className="truncate mt-1">URL: {imageUrl}</div>}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-        
-        {/* Card header */}
+        {/* Card header WITHOUT step number */}
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">
