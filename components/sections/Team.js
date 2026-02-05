@@ -97,15 +97,7 @@ const TeamMemberModal = ({ member, isOpen, onClose }) => {
   };
 
   const socialLinks = parseSocialLinks();
-const getImageUrl = (image) => {
-  if (!image?.url) return '/default-avatar.jpg';
-  // Agar URL pehle se complete hai (like Cloudinary)
-  if (image.url.startsWith('http')) return image.url;
-  
-  // Production URL (Railway) ya fallback
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
-  return `${STRAPI_URL}${image.url}`;
-};
+
   return (
     <AnimatePresence>
       <motion.div
@@ -281,7 +273,14 @@ const getImageUrl = (image) => {
     </AnimatePresence>
   );
 };
-
+const getImageUrl = (image) => {
+  if (!image?.url) return '/default-avatar.jpg';
+  if (image.url.startsWith('http')) return image.url;
+  
+  // Aapka backend URL
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
+  return `${STRAPI_URL}${image.url}`;
+};
 export default function Team({ data }) {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.1 });
