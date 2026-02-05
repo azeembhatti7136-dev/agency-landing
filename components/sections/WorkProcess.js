@@ -149,26 +149,16 @@ const TimelineCard = memo(({
   isActive,
   onHover 
 }) => {
+  const Icon = useMemo(() => getStepIcon(step, index), [step, index]);
   const [imgError, setImgError] = useState(false);
-  const [debugInfo, setDebugInfo] = useState("");
   
   // Get image URL with detailed debugging
 const imageUrl = useMemo(() => {
-  // Debugging: Console mein check karein image ka structure kya hai
-  console.log("Step Image Object:", step.image);
-
-  if (!step.image) return null;
-
-  // Agar Strapi structure nested hai (step.image.data.attributes.url)
-  const imgData = step.image.url || step.image.data?.attributes?.url;
-  
-  if (!imgData) return null;
-
-  if (imgData.startsWith('http')) return imgData;
-
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
-  return `${baseUrl}${imgData}`;
-}, [step]);
+    if (!step.image?.url) return null;
+    if (step.image.url.startsWith('http')) return step.image.url;
+    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
+    return `${baseUrl}${step.image.url}`;
+  }, [step]);
 
   
   // Get icon component
@@ -205,13 +195,12 @@ const imageUrl = useMemo(() => {
       variants={isRight ? VARIANTS.timelineItemRight : VARIANTS.timelineItem}
       onMouseEnter={() => onHover(index)}
       onMouseLeave={() => onHover(null)}
-      className={`relative ${isRight ? 'md:ml-auto' : 'md:mr-auto'} w-full md:w-5/12`}
+      className={`relative w-full md:w-[44%] ${isRight ? 'md:ml-auto' : 'md:mr-auto'} mb-24`}
     >
       {/* Timeline Line Connection */}
-      <div className={`absolute top-8 md:top-12 w-8 h-0.5 md:w-6 
-        ${isRight ? 'left-0 md:-left-6' : 'right-0 md:-right-6'}`}
-        style={{ backgroundColor: color }}
-      />
+     <div className={`absolute top-12 hidden md:flex z-30 
+        ${isRight ? '-left-[13.8%] -translate-x-1/2' : '-right-[13.8%] translate-x-1/2'}`}
+      >
       
       {/* Timeline Node */}
       <div className="absolute top-6 md:top-10 left-1/2 md:left-1/2 -translate-x-1/2 
@@ -220,14 +209,13 @@ const imageUrl = useMemo(() => {
         <motion.div
           animate={{ 
             scale: isActive ? 1.2 : 1,
-            boxShadow: isActive ? `0 0 20px ${color}40` : 'none'
+            backgroundColor: isActive ? color : "#ffffff",
+            boxShadow: isActive ? `0 0 20px ${color}60` : "0 4px 10px rgba(0,0,0,0.1)"
           }}
-          transition={{ type: "spring", stiffness: 300 }}
-          className={`relative w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center
-            border-4 border-white shadow-lg`}
-          style={{ backgroundColor: color }}
+          className="w-14 h-14 rounded-full flex items-center justify-center border-4"
+          style={{ borderColor: color }}
         >
-          <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />
+          <Icon className={`w-6 h-6 ${isActive ? 'text-white' : ''}`} style={{ color: isActive ? '#fff' : color }} />
           
           {/* Pulse effect for active step */}
           {isActive && (
@@ -251,12 +239,15 @@ const imageUrl = useMemo(() => {
         </motion.div>
         
         {/* Step number */}
-        <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-          <div className="px-2 py-1 bg-white rounded-full shadow-sm text-xs font-bold 
-            text-gray-700 border border-gray-200">
-            Step {step.step_number || index + 1}
-          </div>
-        </div>
+        <div className={`absolute -top-4 z-20 ${isRight ? 'left-8' : 'right-8'}`}>
+        <motion.span 
+          animate={{ y: isActive ? -5 : 0 }}
+          className="px-5 py-1.5 rounded-full text-xs font-black text-white shadow-xl tracking-widest uppercase"
+          style={{ backgroundColor: color }}
+        >
+          Step {step.step_number || index + 1}
+        </motion.span>
+      </div>
       </div>
       
       {/* Card Content */}
