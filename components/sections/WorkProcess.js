@@ -101,8 +101,8 @@ const VARIANTS = {
 // Updated getImageUrl function with better debugging
 export const getImageUrl = (image) => {
   if (!image?.url) return null;
-
-  const STRAPI_URL = "http://localhost:1337";
+  // Localhost ki jagah base URL use karein
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
   return `${STRAPI_URL}${image.url}`;
 };
 const scrollToCTA = () => {
@@ -153,16 +153,10 @@ const TimelineCard = memo(({
   const [debugInfo, setDebugInfo] = useState("");
   
   // Get image URL with detailed debugging
-  const imageUrl = useMemo(() => {
-  if (!step.image?.url) {
-    setDebugInfo("No valid image.url found");
-    return null;
-  }
-
-  const fullUrl = `http://localhost:1337${step.image.url}`;
-  setDebugInfo(`Image URL OK`);
-
-  return fullUrl;
+ const imageUrl = useMemo(() => {
+  if (!step.image?.url) return null;
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "https://agency-backend-production-270b.up.railway.app";
+  return `${baseUrl}${step.image.url}`;
 }, [step]);
 
   
